@@ -5,12 +5,16 @@ import { createPortal } from 'react-dom'
 
 import './App.css'
 
-const generateNumbers = luckyNumber => {
+const generateNumbers = (luckyNumber, konglingMode) => {
   const arr = Array.from({ length: 100 }).fill().map((_, i) => i)
   return Array.from({ length: 18 }).fill().map((_, i) => {
+    if (konglingMode) {
+      return luckyNumber; // 当空灵模式开启时，所有数字都是幸运数字
+    }
     const random = Math.floor(Math.random() * arr.length)
     const num = arr.splice(random, 1)[0]
-    if (num === new Date().getDate() && i > 12 && Math.random() > 0.5) {
+    
+    if (num === new Date().getDate() && i > 12 && Math.random() > 0.5 ) {
       return num - 1
     }
     if (num !== luckyNumber || (num === luckyNumber && luckyNumber === random)) {
@@ -19,6 +23,7 @@ const generateNumbers = luckyNumber => {
     return arr.pop() || 0
   })
 }
+
 
 const toLocalPoint = point => {
   const heightRatio = 512 / 6.656
@@ -42,6 +47,19 @@ const prize = [
 ]
 
 function App() {
+  const [konglingMode, setKonglingMode] = useState(() => {
+    const savedMode = localStorage.getItem('konglingMode');
+    return savedMode === null ? false : savedMode === 'true';
+  });
+  
+  
+  
+  const toggleKonglingMode = () => {
+    const newMode = !konglingMode;
+    setKonglingMode(newMode); // 更新状态
+    localStorage.setItem('konglingMode', newMode); // 更新localStorage
+
+  };
   // ref
   const container = useRef()
   const lastRAF = useRef(null)
@@ -51,7 +69,13 @@ function App() {
   const luckyNumber = useRef(Math.floor(Math.random() * 100))
   const numbers = useRef(generateNumbers(luckyNumber.current))
   const prizeIndex = useRef(getPrizeIndex(luckyNumber.current, numbers.current))
+  if (konglingMode){
+  
+    luckyNumber.current = Math.floor(Math.random() * 100);
+    numbers.current = generateNumbers(luckyNumber.current, !konglingMode);
+    prizeIndex.current = getPrizeIndex(luckyNumber.current, numbers.current);
 
+  }
   // enviroment
   const scene = useMemo(() => new THREE.Scene(), [])
   const camera = useMemo(() => new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerHeight * 0.8), 0.1, 1000), [])
@@ -94,7 +118,6 @@ function App() {
     const len = intersectPoints.current.length
     intersectPoints.current.slice(Math.max(0, len - 10), len).forEach(p => {
       const point = toLocalPoint(p)
-      const size = window.innerWidth * 0.1
       ctx1.clearRect(point.x, point.y, 20, 20)
 
       const index = prizeIndex.current.findIndex(i => {
@@ -324,7 +347,12 @@ function App() {
     <div className='main'>
       <div className='container' ref={container} />
       <div className='menu'>
-        <button className='button' onClick={() => location.reload()}>再刮一张</button>
+        <div >
+          <button className='button' onClick={() => location.reload()}>再刮一张</button>
+          <button className='button' onClick={toggleKonglingMode}>
+            {konglingMode ? '关闭空灵模式' : '开启空灵模式'}
+          </button>
+        </div>
         <div className='scan'>
           <span onClick={showModal} href='mailto:kuyermqi@outlook.com'>→ 点我兑奖 ←</span>
         </div>

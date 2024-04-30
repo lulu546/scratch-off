@@ -26,11 +26,12 @@
 }
 
 .button {
-  min-width: max(30vw, 300px);
+  min-width: max(20vw, 300px);
   font-weight: bold;
   padding: 16px;
   background-color: #ffcc16;
   border: 4px solid #ffcc16;
+  margin: 20px;
 }
 
 .button:hover {
@@ -38,6 +39,7 @@
   border: 4px solid #ffcc16;
   color: #ffcc16;
   background-color: #c7000b;
+
 }
 
 .button:focus, .button:focus-visible {
