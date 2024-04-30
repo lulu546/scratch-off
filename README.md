@@ -1,5 +1,5 @@
 # 刮刮乐模拟器 / Scratch-off Simulator
 
-本项目使用 React + Three.js + Vite 构建，仅供娱乐
+增加了空灵模式。
 
-体验地址：[https://scratch-off.vercel.app](https://scratch-off.vercel.app)
+体验地址：[https://red.jrenc.com/](https://red.jrenc.com/)
